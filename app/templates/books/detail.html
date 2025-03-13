@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Book Information -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <!-- Book Cover -->
+                    <div class="col-md-4">
+                        {% if book.cover_image %}
+                        <img src="{{ book.cover_image }}" class="img-fluid rounded" alt="{{ book.title }}">
+                        {% else %}
+                        <div class="bg-light text-center py-5 rounded">
+                            <i class="fas fa-book fa-4x text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Book Details -->
+                    <div class="col-md-8">
+                        <h2 class="card-title">{{ book.title }}</h2>
+                        <p class="text-muted">by {{ book.author.name }}</p>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-{{ 'success' if book.available > 0 else 'danger' }}">
+                                {{ 'Available' if book.available > 0 else 'Unavailable' }}
+                            </span>
+                            <span class="badge bg-info">{{ book.available }}/{{ book.quantity }} copies</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h5>Details</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>ISBN:</strong> {{ book.isbn }}</li>
+                                <li><strong>Publisher:</strong> {{ book.publisher or 'N/A' }}</li>
+                                <li><strong>Publication Year:</strong> {{ book.publication_year or 'N/A' }}</li>
+                                <li><strong>Edition:</strong> {{ book.edition or 'N/A' }}</li>
+                                <li><strong>Category:</strong> {{ book.category.name }}</li>
+                                <li><strong>Location:</strong> {{ book.location or 'N/A' }}</li>
+                            </ul>
+                        </div>
+                        
+                        {% if current_user.is_authenticated %}
+                        <div class="d-flex gap-2">
+                            {% if book.available > 0 and current_user.can_borrow() %}
+                            <form action="{{ url_for('books.borrow_book', id=book.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-book-reader me-1"></i>Borrow
+                                </button>
+                            </form>
+                            {% endif %}
+                            
+                            {% if book.can_be_reserved() %}
+                            <form action="{{ url_for('books.reserve_book', id=book.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-clock me-1"></i>Reserve
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Book Description -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Description</h5>
+            </div>
+            <div class="card-body">
+                {{ book.description or 'No description available.' }}
+            </div>
+        </div>
+        
+        <!-- Author Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">About the Author</h5>
+            </div>
+            <div class="card-body">
+                <h6>{{ book.author.name }}</h6>
+                {% if book.author.birth_date %}
+                <p class="text-muted">
+                    {{ book.author.birth_date.strftime('%Y') }}
+                    {% if book.author.death_date %}
+                    - {{ book.author.death_date.strftime('%Y') }}
+                    {% endif %}
+                </p>
+                {% endif %}
+                {{ book.author.biography or 'No biography available.' }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-md-4">
+        <!-- Loan History -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Loan History</h5>
+            </div>
+            <div class="card-body">
+                {% if book.loans.count() > 0 %}
+                <div class="list-group list-group-flush">
+                    {% for loan in book.loans.order_by(Loan.borrowed_at.desc()).limit(5) %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">{{ loan.user.username }}</small>
+                                <br>
+                                <small>{{ loan.borrowed_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <span class="badge bg-{{ 'success' if loan.returned else 'warning' }}">
+                                {{ 'Returned' if loan.returned else 'Active' }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No loan history available.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Active Reservations -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Active Reservations</h5>
+            </div>
+            <div class="card-body">
+                {% if book.reservations.filter_by(status='pending').count() > 0 %}
+                <div class="list-group list-group-flush">
+                    {% for reservation in book.reservations.filter_by(status='pending').order_by(Reservation.reserved_at.desc()).limit(5) %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">{{ reservation.user.username }}</small>
+                                <br>
+                                <small>Expires: {{ reservation.expires_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <span class="badge bg-info">Pending</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No active reservations.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

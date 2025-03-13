@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Current Loans -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Current Loans</h5>
+                <span class="badge bg-primary">{{ current_loans|length }}</span>
+            </div>
+            <div class="card-body">
+                {% if current_loans %}
+                <div class="list-group list-group-flush">
+                    {% for loan in current_loans %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ loan.book.title }}</h6>
+                                <small class="text-muted">Due: {{ loan.due_date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <a href="{{ url_for('books.book_detail', id=loan.book.id) }}" class="btn btn-sm btn-outline-primary">
+                                View Book
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-book-reader fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">You don't have any current loans.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overdue Books -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Overdue Books</h5>
+                <span class="badge bg-danger">{{ overdue_books|length }}</span>
+            </div>
+            <div class="card-body">
+                {% if overdue_books %}
+                <div class="list-group list-group-flush">
+                    {% for loan in overdue_books %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ loan.book.title }}</h6>
+                                <small class="text-danger">Overdue by {{ ((now - loan.due_date).days) }} days</small>
+                                <br>
+                                <small class="text-muted">Due: {{ loan.due_date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <a href="{{ url_for('books.book_detail', id=loan.book.id) }}" class="btn btn-sm btn-outline-danger">
+                                Return Book
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <p class="text-muted mb-0">No overdue books.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Reservations -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Active Reservations</h5>
+                <span class="badge bg-info">{{ active_reservations|length }}</span>
+            </div>
+            <div class="card-body">
+                {% if active_reservations %}
+                <div class="list-group list-group-flush">
+                    {% for reservation in active_reservations %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ reservation.book.title }}</h6>
+                                <small class="text-muted">Reserved: {{ reservation.reserved_at.strftime('%Y-%m-%d') }}</small>
+                                <br>
+                                <small class="text-warning">Expires: {{ reservation.expires_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <a href="{{ url_for('books.book_detail', id=reservation.book.id) }}" class="btn btn-sm btn-outline-info">
+                                View Book
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No active reservations.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Borrowing History -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Borrowing History</h5>
+            </div>
+            <div class="card-body">
+                {% if borrowing_history %}
+                <div class="list-group list-group-flush">
+                    {% for loan in borrowing_history %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ loan.book.title }}</h6>
+                                <small class="text-muted">
+                                    Borrowed: {{ loan.borrowed_at.strftime('%Y-%m-%d') }}
+                                    {% if loan.returned %}
+                                    | Returned: {{ loan.returned_at.strftime('%Y-%m-%d') }}
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <span class="badge bg-{{ 'success' if loan.returned else 'warning' }}">
+                                {{ 'Returned' if loan.returned else 'Active' }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No borrowing history.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{{ url_for('main.search') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-search me-2"></i>Search Books
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('books.book_list') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-list me-2"></i>Browse Books
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('main.profile') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-user me-2"></i>View Profile
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Featured Books -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Featured Books</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for book in featured_books %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            {% if book.cover_image %}
+                            <img src="{{ book.cover_image }}" class="card-img-top" alt="{{ book.title }}">
+                            {% else %}
+                            <div class="card-img-top bg-light text-center py-5">
+                                <i class="fas fa-book fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h6 class="card-title">{{ book.title }}</h6>
+                                <p class="card-text small text-muted">{{ book.author.name }}</p>
+                                <a href="{{ url_for('books.book_detail', id=book.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Categories -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Popular Categories</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for category in popular_categories %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('books.book_list', category=category.id) }}" class="text-decoration-none">
+                            {{ category.name }}
+                        </a>
+                        <span class="badge bg-primary rounded-pill">{{ category.books|length }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Additions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Additions</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Added</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in recent_books %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('books.book_detail', id=book.id) }}" class="text-decoration-none">
+                                        {{ book.title }}
+                                    </a>
+                                </td>
+                                <td>{{ book.author.name }}</td>
+                                <td>{{ book.category.name }}</td>
+                                <td>{{ book.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if book.available > 0 %}
+                                    <span class="badge bg-success">Available</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Unavailable</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Search -->
+<div class="row mt-4">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-4">Quick Search</h5>
+                <form action="{{ url_for('main.search') }}" method="GET">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Search books, authors, or categories...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

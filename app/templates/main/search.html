@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Search Books</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('main.search') }}" method="GET">
+                    <div class="mb-3">
+                        <label class="form-label">Search Query</label>
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Enter title, author, ISBN, or category...">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i>Search
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Search By</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="search_by" id="title" value="title" checked>
+                            <label class="btn btn-outline-primary" for="title">
+                                <i class="fas fa-book me-1"></i>Title
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="search_by" id="author" value="author">
+                            <label class="btn btn-outline-primary" for="author">
+                                <i class="fas fa-user me-1"></i>Author
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="search_by" id="isbn" value="isbn">
+                            <label class="btn btn-outline-primary" for="isbn">
+                                <i class="fas fa-barcode me-1"></i>ISBN
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="search_by" id="category" value="category">
+                            <label class="btn btn-outline-primary" for="category">
+                                <i class="fas fa-tags me-1"></i>Category
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Search Tips -->
+                <div class="mt-4">
+                    <h6>Search Tips</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Use quotation marks for exact phrases (e.g., "The Great Gatsby")
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Use wildcards (*) for partial matches (e.g., "Harry*")
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Combine multiple terms with AND, OR, or NOT
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Use filters to narrow down your search results
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Popular Searches -->
+                <div class="mt-4">
+                    <h6>Popular Searches</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('main.search', q='Harry Potter', search_by='title') }}" class="btn btn-sm btn-outline-secondary">
+                            Harry Potter
+                        </a>
+                        <a href="{{ url_for('main.search', q='Stephen King', search_by='author') }}" class="btn btn-sm btn-outline-secondary">
+                            Stephen King
+                        </a>
+                        <a href="{{ url_for('main.search', q='Science Fiction', search_by='category') }}" class="btn btn-sm btn-outline-secondary">
+                            Science Fiction
+                        </a>
+                        <a href="{{ url_for('main.search', q='Mystery', search_by='category') }}" class="btn btn-sm btn-outline-secondary">
+                            Mystery
+                        </a>
+                        <a href="{{ url_for('main.search', q='Romance', search_by='category') }}" class="btn btn-sm btn-outline-secondary">
+                            Romance
+                        </a>
+                        <a href="{{ url_for('main.search', q='Biography', search_by='category') }}" class="btn btn-sm btn-outline-secondary">
+                            Biography
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

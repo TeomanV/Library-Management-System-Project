@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Filters Sidebar -->
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('books.book_list') }}">
+                    <!-- Category Filter -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-tag me-1"></i>Category
+                        </label>
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.args.get('category')|int == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Author Filter -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-user-edit me-1"></i>Author
+                        </label>
+                        <select name="author" class="form-select">
+                            <option value="">All Authors</option>
+                            {% for author in authors %}
+                            <option value="{{ author.id }}" {% if request.args.get('author')|int == author.id %}selected{% endif %}>
+                                {{ author.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Availability Filter -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-check-circle me-1"></i>Availability
+                        </label>
+                        <select name="available" class="form-select">
+                            <option value="">All</option>
+                            <option value="1" {% if request.args.get('available') == '1' %}selected{% endif %}>Available</option>
+                            <option value="0" {% if request.args.get('available') == '0' %}selected{% endif %}>Unavailable</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i>Apply Filters
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Book List -->
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-book me-2"></i>Books
+                </h5>
+                {% if current_user.role in ['librarian', 'admin'] %}
+                <a href="{{ url_for('books.add_book') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Add Book
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if books.items %}
+                <div class="row">
+                    {% for book in books.items %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card book-card h-100">
+                            {% if book.cover_image %}
+                            <img src="{{ book.cover_image }}" class="card-img-top" alt="{{ book.title }}">
+                            {% else %}
+                            <div class="card-img-top bg-light text-center py-5">
+                                <i class="fas fa-book fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h6 class="card-title fw-bold">{{ book.title }}</h6>
+                                <p class="card-text small text-muted mb-2">
+                                    <i class="fas fa-user-edit me-1"></i>{{ book.author.name }}
+                                </p>
+                                <p class="card-text small text-muted mb-2">
+                                    <i class="fas fa-tag me-1"></i>{{ book.category.name }}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-{{ 'success' if book.available > 0 else 'danger' }}">
+                                        <i class="fas fa-{{ 'check' if book.available > 0 else 'times' }} me-1"></i>
+                                        {{ 'Available' if book.available > 0 else 'Unavailable' }}
+                                    </span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-book me-1"></i>{{ book.available }}/{{ book.quantity }}
+                                    </small>
+                                </div>
+                                <a href="{{ url_for('books.book_detail', id=book.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-info-circle me-1"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if books.pages > 1 %}
+                <nav aria-label="Book navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% for page in books.iter_pages() %}
+                            {% if page %}
+                                <li class="page-item {{ 'active' if page == books.page else '' }}">
+                                    <a class="page-link" href="{{ url_for('books.book_list', page=page, **request.args) }}">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </nav>
+                {% endif %}
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">No books found</h5>
+                    <p class="text-muted">Try adjusting your filters or check back later.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
