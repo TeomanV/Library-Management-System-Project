@@ -1,83 +1,152 @@
 # Library Management System
 
-A modern, feature-rich Library Management System designed to streamline library operations, enhance user experience, and provide valuable analytics.
+A modern, user-friendly library management system built with Flask, featuring a beautiful UI and comprehensive functionality for managing books, users, and library operations.
+
+![Library Management System](app/static/images/library-dashboard.png)
 
 ## Features
 
-- **Book Management**: Efficient cataloging, acquisition, and tracking
-- **User-Friendly Interface**: Intuitive design for both staff and patrons
-- **Automated Processes**: Streamlined check-in/check-out, reservations, and notifications
-- **Inventory Management**: Stock monitoring and reordering suggestions
-- **Advanced Search**: Quick and efficient book, author, and genre search
-- **User Account Management**: Personalized user accounts with borrowing history
-- **Analytics Dashboard**: Insights into library usage and trends
-- **Security**: Role-based access control and data protection
-- **Integration Capabilities**: APIs for connecting with other systems
-- **Scalable Architecture**: Designed to grow with your library
+### For Users
+- 📚 Browse and search books
+- 🔍 Advanced filtering by category, author, and availability
+- 📖 View detailed book information
+- 🔒 Secure user authentication
+- 📱 Responsive design for all devices
+- 📊 Personal dashboard with reading history
+- 📅 Book reservation system
+
+### For Librarians
+- 📝 Add and edit books
+- 👥 Manage user accounts
+- 📊 Generate reports and statistics
+- 📋 Track book loans and returns
+- 🏷️ Manage categories and authors
+
+### For Administrators
+- ⚙️ System configuration
+- 📈 Advanced analytics
+- 🔐 User role management
+- 📊 Comprehensive reporting
+- 🔄 System maintenance tools
+
+## Screenshots
+
+### Home Page
+![Home Page](app/static/images/home-page.png)
+
+### Book List
+![Book List](app/static/images/book-list.png)
+
+### Book Details
+![Book Details](app/static/images/book-details.png)
+
+### User Dashboard
+![User Dashboard](app/static/images/user-dashboard.png)
+
+### Admin Dashboard
+![Admin Dashboard](app/static/images/admin-dashboard.png)
 
 ## Technology Stack
 
-- **Backend**: Python with Flask framework
-- **Database**: SQLAlchemy ORM with SQLite (configurable for MySQL/PostgreSQL)
-- **Frontend**: HTML, CSS, JavaScript with Bootstrap
+- **Backend**: Python, Flask
+- **Database**: SQLAlchemy, SQLite
+- **Frontend**: HTML5, CSS3, JavaScript
+- **UI Framework**: Bootstrap 5
 - **Authentication**: Flask-Login
-- **API**: Flask-RESTful
-- **Analytics**: Pandas and Matplotlib
+- **Forms**: Flask-WTF
+- **Icons**: Font Awesome
+- **Fonts**: Google Fonts (Poppins)
 
 ## Installation
 
 1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/library-management-system.git
-   cd library-management-system
-   ```
+```bash
+git clone https://github.com/TeomanV/Library-Management-System-Project.git
+cd Library-Management-System-Project
+```
 
 2. Create and activate a virtual environment:
-   ```
-   python -m venv venv
-   # On Windows
-   venv\Scripts\activate
-   # On macOS/Linux
-   source venv/bin/activate
-   ```
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+```
 
 3. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-4. Initialize the database:
-   ```
-   flask db init
-   flask db migrate -m "Initial migration"
-   flask db upgrade
-   ```
+4. Set up environment variables:
+Create a `.env` file in the root directory with the following content:
+```
+FLASK_APP=run.py
+FLASK_ENV=development
+SECRET_KEY=your-secret-key
+DATABASE_URL=sqlite:///library.db
+```
 
-5. Run the application:
-   ```
-   flask run
-   ```
+5. Initialize the database:
+```bash
+flask db init
+flask db migrate
+flask db upgrade
+```
 
-6. Access the application at `http://localhost:5000`
+6. Create an admin user:
+```bash
+python create_admin.py
+```
+
+7. Run the application:
+```bash
+python run.py
+```
+
+## Default Admin Credentials
+
+- **Username**: admin
+- **Password**: admin123
 
 ## Project Structure
 
-- `app/`: Main application package
-  - `models/`: Database models
-  - `routes/`: Route handlers
-  - `templates/`: HTML templates
-  - `static/`: CSS, JavaScript, and images
-  - `forms/`: Form definitions
-  - `utils/`: Utility functions
-- `migrations/`: Database migrations
-- `tests/`: Test cases
-- `config.py`: Configuration settings
-- `run.py`: Application entry point
+```
+libraryManagement/
+├── app/
+│   ├── __init__.py
+│   ├── models/
+│   ├── routes/
+│   ├── forms/
+│   ├── static/
+│   └── templates/
+├── migrations/
+├── venv/
+├── .env
+├── .gitignore
+├── config.py
+├── create_admin.py
+├── requirements.txt
+└── run.py
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contributors
+## Author
 
-- Your Name - Initial work 
+Teoman V.
+
+## Acknowledgments
+
+- Flask documentation and community
+- Bootstrap team for the amazing UI framework
+- Font Awesome for the icons
+- Google Fonts for the Poppins font family 
